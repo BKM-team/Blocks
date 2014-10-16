@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Blocks Proof of Concept</title>
+    <style>
+        body, pre, div, input {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body, div, input, button, textarea {
+            -webkit-font-smoothing: subpixel-antialiased;
+            text-rendering: geometricPrecision;
+            font-family: 'SourceCodeProRegular', 'Courier New', monospace;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        input, button {
+            -webkit-appearance: none;
+        }
+
+        input[type=button], button {
+            border: 1px solid #43ac6a;
+            border-radius: 4px;
+            background-color: transparent;
+            text-align: center;
+            width: 90px;
+            margin: 5px;
+            height: 30px;
+            font-size: .8em;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        input[type=button]:hover, button:hover {
+            background: rgba(0, 64, 84, 0.03);
+        }
+
+        .block {
+            background-color: #008cba;
+            min-width: 100px;
+            height: 50px;
+            padding: 10px;
+
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.5em;
+            line-height: 50px;
+            cursor: move;
+            color: white;
+
+            position:absolute;
+            transition: background-color .2s;
+        }
+
+        .block:hover {
+            background-color: #007095;
+        }
+
+        #inputSidebar {
+            height: 100vh;
+            width: 100px;
+            background-color: #43ac6a;
+            float: left;
+        }
+
+        #outputSidebar {
+            height: 100vh;
+            width: 100px;
+            background-color: #43ac6a;
+            float: right;
+        }
+
+        .socket {
+            width: calc(100% - 10px);
+            height: 50px;
+            margin: 10px 5px;
+            display: flex;
+            box-sizing: border-box;
+
+            border: 1px solid #d5a5ff;
+            border-radius: 4px;
+            background-color: #ddd;
+            text-align: center;
+            font-size: .8em;
+        }
+
+        .socket input {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            border: none;
+            font-size: 1.5em;
+            border-radius: 4px;
+        }
+
+        .socket input:focus {
+            outline: none;
+        }
+
+        #toolboxSidebar {
+            height: 100vh;
+            width: 100px;
+            float: left;
+            background-color: #fafafa;
+        }
+
+        #toolboxSidebar input { clear: both; display: block; }
+
+        #workspace {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            font-size: 1em;
+            resize: none;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        /* jsPlumb */
+        ._jsPlumb_endpoint {
+            cursor: pointer;
+            z-index: 100;
+        }
+
+    </style>
+    <link rel="stylesheet" href="fonts/sourcecodepro-regular.css">
+ </head>
+
+<body>
+    <div id="workspace">
+        <div id="toolboxSidebar"></div>
+        <div id="inputSidebar"></div>
+        <div id="content"></div>
+        <div id="outputSidebar"></div>
+    </div>
+    <textarea>function kompl (x, y) {
+    return x + y;
+}</textarea>
+<button onclick="addCustom()">Dodaj</button>
+
+    <pre id="output"></pre>
+
+    <script src="bower_components/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="bower_components/jquery-ui/ui/jquery-ui.js" type="text/javascript"></script>
+    <script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.5.5.js" type="text/javascript"></script>
+
+    <!--script src="underscore-min.js" type="text/javascript"></script-->
+    <script src="traceur.js" type="text/javascript"></script>
+    <script src="bootstrap.js" type="text/javascript"></script>
+    <!--
+    <script src="https://traceur-compiler.googlecode.com/git/bin/traceur.js"
+        type="text/javascript"></script>
+    <script src="https://traceur-compiler.googlecode.com/git/src/bootstrap.js"
+        type="text/javascript"></script>
+
+    -->
+    <script>
+      traceur.options.experimental = true;
+    </script>
+
+    <script type="module" src="main.js"></script>
+
+</body>
+
+ </html>

@@ -6,8 +6,8 @@ var exampleDropOptions = {
     //tolerance: "touch",
     activeClass: "dragActive",
 
-    connector: ["Bezier", { curviness: 1 }],
-    endpoint: ["Dot", { radius: 11 }],
+    connector: [ "Flowchart", { stub:5 } ],
+    endpoint: ["Dot", { radius: 2 }],
 };
 
 function getEndpointColorFromType(type) {
@@ -26,6 +26,8 @@ function createTypeEndpoint(type, isInput) {
 
         scope: type,
         connectorStyle: { strokeStyle: color, lineWidth: 6 },
+        connector: [ "Bezier", { curviness: "5" } ],
+        endpoint: ["Dot", { radius: 9 }],
 
         dropOptions: exampleDropOptions,
 
@@ -49,10 +51,12 @@ var objects = new Map();
 var functions = new Map();
 var connections = [];
 
-function createInput() {
+function createInput(id = "") {
     var block = document.createElement('div');
     block.className = 'socket';
-    block.id = "input" + num++;
+
+    if (!id) id = "input" + String(num++)
+    block.id = id;
     document.getElementById("inputSidebar").appendChild(block);
 
     var input = document.createElement('input');
@@ -69,24 +73,26 @@ function createInput() {
         return this.value;
     }.bind(input);
 
-    inputs.insert(num, {
-        handle: block
-    });
+    // objects.insert(num, {
+    //     handle: block
+    // });
 
-    /*objects.insert(block.id, {
+    objects.insert(block.id, {
         process: block.process,
         id: block.id,
         blockHandle: block,
-    });*/
+        fname: 'input'
+    });
 
     var endpoint = createTypeEndpoint("string", false);
     jsPlumb.addEndpoint(block, { anchor: [1, 0.5, 1, 0] }, endpoint);
 }
 
-function createOutput() {
+function createOutput(id = "") {
     var block = document.createElement('div');
     block.className = 'socket';
-    block.id = "output" + num++;
+    var id = id || "output" + num++;
+    block.id = id;
     document.getElementById("outputSidebar").appendChild(block);
 
     var input = document.createElement('input');
@@ -96,11 +102,12 @@ function createOutput() {
         this.value = input;
     }.bind(input);
 
-    /*objects.insert(block.id,{
+    objects.insert(block.id,{
         process: block.process,
         id: block.id,
         blockHandle: block,
-    });*/
+        fname: 'output'
+    });
 
     var endpoint = createTypeEndpoint("string", true);
     jsPlumb.addEndpoint(block, { anchor: [0, 0.5, -1, 0] }, endpoint);
@@ -154,7 +161,7 @@ function createBlock(fname, id = "") {
 
 
 function exportBlocks() {
-    var exportObjects = map((object) => {
+    var exportObjects = _.map((object) => {
         var positionX = object.blockHandle.offsetLeft;
         var positionY = object.blockHandle.offsetTop;
 
@@ -170,7 +177,7 @@ function exportBlocks() {
     }, objects.values());
 
     // Force evaluation of lazy computations for the serialization purpose
-    exportObjects = seq(exportObjects);
+    exportObjects = _.seq(exportObjects);
 
     return JSON.stringify({
         connections: connections,
@@ -182,11 +189,18 @@ function importBlocks(data) {
     data = JSON.parse(data);
 
     objects = new Map();
-    $(".block").remove();
+    $(".block, .socket").remove();
     jsPlumb.reset();
 
     _.forM(data.objects, (object) => {
-        var block = createBlock(object.fname, object.id);
+        var block;
+        if (object.fname === 'input') {
+            block = createInput(object.id);
+        } else if (object.fname === 'output') {
+            block = createOutput(object.id);
+        } else {
+            block = createBlock(object.fname, object.id);
+        }
 
         // todo: get rid of jQ here
         $(block).offset({
@@ -201,7 +215,7 @@ function importBlocks(data) {
         var sourceEndpoint = objects.at(c.sourceId).outputEndpoints[c.sourceEndpointNum];
         var targetEndpoint = objects.at(c.targetId).inputEndpoints[c.targetEndpointNum];
 
-        jsPlumb.connect({ source: sourceEndpoint, target: targetEndpoint });
+        jsPlumb.connect({ source: sourceEndpoint, target: targetEndpoint, connector:[ "Flowchart", {stub:5} ] });
     }
     connections = data.connections;
 
@@ -245,7 +259,7 @@ function topologicalSort() {
         var blockId = blocksToDo.pop();
         visit(blockId);
     }
-        
+
     return sortedBlocks;
 }
 
@@ -255,7 +269,7 @@ function codegenBlockRun(block) {
     // find the input that is connected to that endpoint
     block.inputEndpoints.forEach((endpoint, endpointNum) => {
         // we can assume at most one connection is present in input endpoint
-        if (endpoint.connections.length < 1) 
+        if (endpoint.connections.length < 1)
         //throw "All inputs must be connected!";
             return;
 
@@ -265,7 +279,7 @@ function codegenBlockRun(block) {
         var sourceId = endpoint.connections[0].sourceId;
         // * the endpoint number from which we want the value
         var sourceEndpointNum = getEndpointNum(sourceId, endpoint.connections[0].endpoints[0], "output");
-        code += "input_" + block.id + "[" + endpointNum + "] = output_" + sourceId + "[" + sourceEndpointNum + "];\n"; 
+        code += "input_" + block.id + "[" + endpointNum + "] = output_" + sourceId + "[" + sourceEndpointNum + "];\n";
     });
 
     code += "output_" + block.id + " = process_" + block.id + "(input_" + block.id + ");\n"
@@ -295,7 +309,7 @@ function mul(x, y) {
 mul.signature = { ins: ["int", "int"], outs: ["int"] };
 
 function toUpper(str) {
-    return str;
+    return str.toUpperCase();
 }
 toUpper.signature = { ins: ["string"], outs: ["string"] };
 
@@ -351,17 +365,32 @@ function getEndpointNum(elementId, endpointObj, type) {
     }
 
     var endpoints = (type === "input") ? object.inputEndpoints : object.outputEndpoints;
-    for (var i = 0; i < endpoints.length; i++) {
+    for (var i = 0; endpoints && i < endpoints.length; i++) {
         if (endpoints[i] === endpointObj) {
             endpointNum = i;
             break;
         }
     }
-    if (endpointNum === -1) { 
-        throw "Error in connecting; no such endpoint in the element"; 
+    if (endpointNum === -1) {
+        throw "Error in connecting; no such endpoint in the element";
     }
 
     return endpointNum;
+}
+
+function addCustom () {
+    var code = document.querySelector('textarea').value;
+    var fn = eval('(' + code + ')');
+    fn.fname = 'custom__' + String(Math.random());
+
+    console.log(fn.length);
+
+    var ins = Array.apply(null, new Array(fn.length)).map(String.prototype.valueOf, 'string')
+
+
+    fn.signature = { ins: ins, outs: ["string"] };
+
+    registerFunction(fn);
 }
 
 var jsPlumbBindHandlers = function() {
@@ -389,7 +418,7 @@ var jsPlumbBindHandlers = function() {
                 c.targetEndpointNum === targetEndpointNum)
             {
                 // if it's not the last element, put the last element in its place
-                if (i < connections.length - 1) { 
+                if (i < connections.length - 1) {
                     connections[i] = connections[connections.length-1];
                 }
                 connections.pop();
@@ -408,6 +437,7 @@ var jsPlumbBindHandlers = function() {
 $(function () {
     jsPlumb.importDefaults({
         EndpointHoverStyle : "cursor: pointer;",
+        connector:[ "Flowchart", {stub:5} ]
     });
 
     jsPlumbBindHandlers();
@@ -416,6 +446,7 @@ $(function () {
     registerFunction(mul);
     registerFunction(toInt);
     registerFunction(toStr);
+    registerFunction(toUpper);
 
     $("#toolboxSidebar").append('<input type="button" onclick="localStorage[1] = exportBlocks()" value="export"></input>');
     $("#toolboxSidebar").append('<input type="button" onclick="importBlocks(localStorage[1])" value="import"></input>');
@@ -428,4 +459,11 @@ $(function () {
     createBlock(toInt);
     createBlock(toString);
     createOutputBlock();*/
+
+    window.createBlock = createBlock;
+    window.exportBlocks = exportBlocks;
+    window.importBlocks = importBlocks;
+    window.createInput = createInput;
+    window.createOutput = createOutput;
+    window.addCustom = addCustom;
 });

@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'SourceCodeProRegular';
+    src: url('sourcecodepro-regular.eot');
+    src: url('sourcecodepro-regular.eot') format('embedded-opentype'),
+         url('sourcecodepro-regular.woff2') format('woff2'),
+         url('sourcecodepro-regular.woff') format('woff'),
+         url('sourcecodepro-regular.ttf') format('truetype'),
+         url('sourcecodepro-regular.svg#SourceCodeProRegular') format('svg');
+}
