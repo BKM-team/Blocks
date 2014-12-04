@@ -8,15 +8,17 @@ pre {
 body {
     margin: 0;
     padding: 0;
+    background-color: #181a1a;
 }
 div.block {
-    background-color: #36C;
+    background-color: #282b2b;
     min-width: 200px;
     height: 100px;
     float: left;
     padding: 10px;
             
     position:absolute;
+    box-shadow: 0px 5px 7px 2px rgba(0, 0, 0, 0.22);
 }
 
 div.block span {
@@ -24,6 +26,10 @@ div.block span {
     font-size: 2em;
     font-family: Helvetica;
     margin: 0px;
+    
+    color: #008c9e;
+    box-shadow: 0px 5px 7px 2px rgba(0, 0, 0, 0.22);
+    background-color: #343838;
 }
 
 div.closeButton {
@@ -49,19 +55,29 @@ div.closeButton {
 
 div#toolboxSidebar {
     height: 100vh;
-    width: 20vw;
+    width: 10vw;
     float: left;
-    background-color: #d5a5ff;
-    padding: 5px;
-    box-sizing: border-box;
+    background-color: #404545;
+    padding: 0px 10px 0px 10px;
+    box-shadow: 0px 5px 7px 2px rgba(0, 0, 0, 0.22);
+    top: 0px;
+    padding-top: 20px;
+    bottom: 0px;
+    position: fixed;
 }
+
 div#toolboxSidebar input {
     clear: both;
     display: block;
     margin-bottom: 5px;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0px 5px 7px 2px rgba(0, 0, 0, 0.22);
     min-height: 30px;
+}
+
+svg path {
+    stroke: #005f6b;
 }
 
 div#workspace {
