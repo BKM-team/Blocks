@@ -38,7 +38,7 @@ function createEndpointDef(isParam) {
         endpoint: ["Dot", { radius: 11 }],
     };
 
-    var color = (isParam ? "#999999" : "#cc9999");
+    var color = (isParam ? "#778080" : "#39cfe4");
 
     return {
         paintStyle: { fillStyle: color },
