@@ -1,8 +1,8 @@
 'use strict';
 
-var WORLD_GRAVITY = 600;
+var WORLD_GRAVITY = 200;
 var WALKING_VELOCITY = 130;
-var JUMP_VELOCITY = (0.26 * WORLD_GRAVITY + 130);
+var JUMP_VELOCITY = (0.26 * WORLD_GRAVITY + 140);
 
 function Level1() {}
 
@@ -17,6 +17,7 @@ Level1.prototype = {
         this.map = this.add.tilemap('super_mario_map');
         this.map.addTilesetImage('SuperMarioBros-World1-1', 'super_mario_tiles');
         this.backgroundLayer = this.map.createLayer('backgroundLayer');
+        this.bgObjLayer = this.map.createLayer('bgObjLayer');
         this.blockingLayer = this.map.createLayer('blockingLayer');
 
         // 1896 is the maximum number of layers in Tiled
