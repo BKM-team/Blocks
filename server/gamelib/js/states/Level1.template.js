@@ -1,8 +1,8 @@
 'use strict';
 
-var WORLD_GRAVITY = 600;
+var WORLD_GRAVITY = 300;
 var WALKING_VELOCITY = 130;
-var JUMP_VELOCITY = (0.26 * WORLD_GRAVITY + 130);
+var JUMP_VELOCITY = (0.26 * WORLD_GRAVITY + 180);
 
 function Level1() {}
 
