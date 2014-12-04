@@ -184,6 +184,14 @@ server.route({
 
         fs.writeFileSync(filePath + 'super_mario.png', image.data);
         data.tilesets[0].image = './super_mario.png';
+
+        Object.getOwnPropertyNames(data._objects).forEach(function (name) {
+            var image = decodeBase64Image(data._objects[name]);
+            fs.writeFileSync(filePath + name + '.png', image.data);
+        });
+
+        delete data._objects;
+
         fs.writeFileSync(filePath + 'super_mario.json', JSON.stringify(data));
         reply().code(200);
     }
