@@ -1,0 +1,21 @@
+{
+  "name": "Blocks",
+  "version": "0.0.0",
+  "homepage": "https://github.com/BKM-team/Blocks",
+  "authors": [
+    "Michal Miszczyszyn <michal@mmiszy.pl>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-ui": "1.10.4",
+    "jsPlumb": "1.5.5",
+    "jquery": "~2.1.1"
+  }
+}

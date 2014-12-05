@@ -37,7 +37,7 @@ function getParams(blockString) {
 //}
 
 var predefinedBlocks = [
-    {  
+    {
         name: "root",
         templateString: "{{root}}",
         params: ["root"]
@@ -48,7 +48,12 @@ var predefinedBlocks = [
         params: ["variable", "value"]
     },
     {
-        name: "subtract",
+        name: "add",
+        templateString: "{{variable}} + {{value}};",
+        params: ["variable", "value"]
+    },
+    {
+        name: "decrement",
         templateString: "{{variable}} -= {{value}};",
         params: ["variable", "value"]
     },
@@ -93,18 +98,18 @@ function ev(block) {
     //console.log(block);
 
     // if it's just a string, return it
-    if (block.value) 
+    if (block.value)
         return block.value;
 
     var blockName = block.name;
     var blockData = predefinedBlocks.find(function(p){ return p.name == blockName });
 
-    if (!blockData) 
+    if (!blockData)
         throw "No such block (" + blockName + ") exists in the library";
 
     var templateString = blockData.templateString;
     var params = block.params;
-        
+
     // if it has any params, verify that they've been provided
     var paramList = blockData.params;
     paramList.forEach(function(param){
@@ -172,7 +177,7 @@ function deserializeToBlocks(jsonData) {
                 return { value:obj.value };
             }
 
-            var result = { 
+            var result = {
                 name: obj.name,
                 params: { }
             };
@@ -186,7 +191,7 @@ function deserializeToBlocks(jsonData) {
         };
 
         var expandedBlock = expandObject(root);
-        return { 
+        return {
             name: name,
             code: expandedBlock
         };

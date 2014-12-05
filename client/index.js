@@ -24,7 +24,7 @@ unitName = "playerjump";
         value = list[i];
         if (predicate.call(thisArg, value, i, list)) {
             return value;
-        } 
+        }
     }
     return undefined;
 };
@@ -78,7 +78,7 @@ window.createBlockBase = function(displayLabel, id) {
         // remove all the connections from and to it
         jsPlumb.detachAllConnections(this, {fireEvent:false});
         connections.forEach(function(c) {
-            if (c.sourceId === this.id || c.targetId === this.id) 
+            if (c.sourceId === this.id || c.targetId === this.id)
                 delete c;
         });
 
@@ -173,7 +173,7 @@ window.createBlock = function (blockName, id) {
     var $block = createBlockBase(blockName, id);
     var block = blockDefs.get(blockName);
 
-    if(!block) 
+    if(!block)
         throw "No block named " + blockName + " found in the library!";
 
     var endpoints = [];
@@ -356,7 +356,11 @@ var predefinedBlocks = [
         params: ["variable", "value"]
     },
     {
-        name: "subtract",
+        name: "decrement",
+        params: ["variable", "value"]
+    },
+    {
+        name: "add",
         params: ["variable", "value"]
     },
     {
@@ -375,6 +379,11 @@ var predefinedBlocks = [
     {
         name: "ifthenelse",
         params: ["condition", "operation", "alternativeOperation"]
+    },
+
+    {
+        name: "playPlayerAnimation",
+        params: ["animation"]
     }
 ];
 
@@ -427,7 +436,7 @@ window.result = "";
 window.sendToServer = function() {
     var data = exportBlocks();
 
-    $.ajax({ 
+    $.ajax({
         type: "POST",
         url: "http://localhost:3000/blocks",
         data: exportBlocks()
@@ -462,7 +471,7 @@ window.loadBlocks = function(name) {
     }
 }
 
-window.downloadLogicFile = function() {    
+window.downloadLogicFile = function() {
     var blob = new Blob([localStorage[unitName]], {type : 'text/json'});
     saveAs(blob, unitName + ".json");
 }
